@@ -41,6 +41,7 @@ fun ParfymerScreen(
     var perfumeNotes by remember { mutableStateOf("") }
     var isDeleteMode by remember { mutableStateOf(false) } 
     var perfumeToDelete by remember { mutableStateOf<SavedPerfume?>(null) }
+    var isEditingExisting by remember { mutableStateOf(false) } 
     
     val selectedOils = remember { mutableStateMapOf<String, Boolean>() }
     val oilDrops = remember { mutableStateMapOf<String, Int>() }
@@ -60,22 +61,38 @@ fun ParfymerScreen(
     when (currentMode) {
         "create" -> {
             // Skapa - namn och ingredienser
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
-                Button(onClick = { currentMode = "list" }) { Text("Avbryt") }
+            Column(
+                modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = { currentMode = "list" },
+                        contentPadding = PaddingValues(0.dp),
+                        colors = ButtonDefaults.buttonColors(contentColor = Color.Black)
+                    ) { Text("<-") }
+                }
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(text = "Ny parfym", style = MaterialTheme.typography.headlineLarge)
+                Text(text = if (isEditingExisting) "Redigera parfym" else "Ny parfym", style = MaterialTheme.typography.headlineLarge, color = Color.Black)
                 Spacer(modifier = Modifier.height(24.dp))
                 
-                // Namnfältet - namn försvinner såfort man skriver något
+                // Namnfältet
                 OutlinedTextField(
                     value = perfumeName,
                     onValueChange = { perfumeName = it },
-                    placeholder = { Text("Namn") }, 
-                    modifier = Modifier.fillMaxWidth()
+                    placeholder = { Text("Namn", color = Color.Gray) }, 
+                    modifier = Modifier.width(260.dp),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
+                    )
                 )
                 
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(text = "Välj ingredienser:", style = MaterialTheme.typography.titleMedium)
+                Text(text = "Välj ingredienser:", style = MaterialTheme.typography.titleMedium, color = Color.Black)
                 
                 MultiSelectDropdown("Topnoter", topnotOils, selectedOils)
                 MultiSelectDropdown("Mellannoter", mellannotOils, selectedOils)
@@ -83,7 +100,13 @@ fun ParfymerScreen(
                 MultiSelectDropdown("Övrigt", ovrigtOils, selectedOils)
 
                 Spacer(modifier = Modifier.height(40.dp))
-                Button(onClick = { currentMode = "summary" }, modifier = Modifier.fillMaxWidth(), enabled = perfumeName.isNotBlank()) {
+                Button(
+                    onClick = { currentMode = "summary" }, 
+                    modifier = Modifier.width(180.dp), 
+                    enabled = perfumeName.isNotBlank(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(contentColor = Color.Black)
+                ) {
                     Text("Gå vidare")
                 }
             }
@@ -95,6 +118,7 @@ fun ParfymerScreen(
             var topDrops = 0
             var mellanDrops = 0
             var basDrops = 0
+            var ovrigtDrops = 0
 
             // Valda oljor, plussar ihop dropparna
             oilDrops.forEach { (name, drops) ->
@@ -103,13 +127,21 @@ fun ParfymerScreen(
                     if (topnotOils.contains(name)) topDrops += drops
                     if (mellannotOils.contains(name)) mellanDrops += drops
                     if (basnotOils.contains(name)) basDrops += drops
+                    if (ovrigtOils.contains(name)) ovrigtDrops += drops
                 }
             }
 
             Column(modifier = Modifier.fillMaxSize().padding(16.dp).verticalScroll(rememberScrollState())) {
-                Button(onClick = { currentMode = "create" }) { Text("Gå tillbaka") }
+                Button(
+                    onClick = { 
+                        if (isEditingExisting) currentMode = "list" else currentMode = "create" 
+                    },
+                    colors = ButtonDefaults.buttonColors(contentColor = Color.Black)
+                ) { 
+                    Text("<-") 
+                }
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(text = perfumeName, style = MaterialTheme.typography.headlineLarge)
+                Text(text = perfumeName, style = MaterialTheme.typography.headlineLarge, color = Color.Black)
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -117,16 +149,20 @@ fun ParfymerScreen(
                 Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))) {
                     Row(modifier = Modifier.padding(12.dp).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Topp", style = MaterialTheme.typography.labelSmall)
-                            Text("${if(totalDrops > 0) (topDrops*100)/totalDrops else 0}%", fontWeight = FontWeight.Bold)
+                            Text("Topp", style = MaterialTheme.typography.labelSmall, color = Color.Black)
+                            Text("${if(totalDrops > 0) (topDrops*100)/totalDrops else 0}%", fontWeight = FontWeight.Bold, color = Color.Black)
                         }
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Mellan", style = MaterialTheme.typography.labelSmall)
-                            Text("${if(totalDrops > 0) (mellanDrops*100)/totalDrops else 0}%", fontWeight = FontWeight.Bold)
+                            Text("Mellan", style = MaterialTheme.typography.labelSmall, color = Color.Black)
+                            Text("${if(totalDrops > 0) (mellanDrops*100)/totalDrops else 0}%", fontWeight = FontWeight.Bold, color = Color.Black)
                         }
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Bas", style = MaterialTheme.typography.labelSmall)
-                            Text("${if(totalDrops > 0) (basDrops*100)/totalDrops else 0}%", fontWeight = FontWeight.Bold)
+                            Text("Bas", style = MaterialTheme.typography.labelSmall, color = Color.Black)
+                            Text("${if(totalDrops > 0) (basDrops*100)/totalDrops else 0}%", fontWeight = FontWeight.Bold, color = Color.Black)
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("Övrigt", style = MaterialTheme.typography.labelSmall, color = Color.Black)
+                            Text("${if(totalDrops > 0) (ovrigtDrops*100)/totalDrops else 0}%", fontWeight = FontWeight.Bold, color = Color.Black)
                         }
                     }
                 }
@@ -140,11 +176,11 @@ fun ParfymerScreen(
                             Row(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     val displayName = oil.split(" | ")[0]
-                                    Text(text = displayName, style = MaterialTheme.typography.bodyLarge)
+                                    Text(text = displayName, style = MaterialTheme.typography.bodyLarge, color = Color.Black)
                                     Text(text = categoryName, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
                                 }
                                 Box(contentAlignment = Alignment.Center, modifier = Modifier.size(36.dp).background(MaterialTheme.colorScheme.primary, CircleShape).clickable { if (currentDrops > 0) oilDrops[oil] = currentDrops - 1 } ) {
-                                    Text(text = "-", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                                    Text(text = "-", color = Color.Black, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                                 }
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Box(contentAlignment = Alignment.Center, modifier = Modifier.size(75.dp).clickable { oilDrops[oil] = currentDrops + 1 }) {
@@ -153,7 +189,7 @@ fun ParfymerScreen(
                                 }
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Box(contentAlignment = Alignment.Center, modifier = Modifier.size(36.dp).background(MaterialTheme.colorScheme.primary, CircleShape).clickable { oilDrops[oil] = currentDrops + 1 }) {
-                                    Text(text = "+", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                                    Text(text = "+", color = Color.Black, fontSize = 22.sp, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -164,21 +200,50 @@ fun ParfymerScreen(
                 OutlinedTextField(
                     value = perfumeNotes, 
                     onValueChange = { perfumeNotes = it }, 
-                    placeholder = { Text("Övriga anteckningar") }, 
+                    placeholder = { Text("Övriga anteckningar", color = Color.Gray) }, 
                     modifier = Modifier.fillMaxWidth(), 
-                    minLines = 3
+                    minLines = 3,
+                    shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black
+                    )
                 )
-                Button(onClick = {
-                    val ingredientsList = mutableListOf<Ingredient>()
-                    cats.forEach { (l, cat) -> 
-                        l.forEach { o -> 
-                            val d = oilDrops[o] ?: 0
-                            if (selectedOils[o] == true && d > 0) ingredientsList.add(Ingredient(o, d, cat))
+
+                Button(
+                    onClick = {
+                        val ingredientsList = mutableListOf<Ingredient>()
+                        cats.forEach { (l, cat) -> 
+                            l.forEach { o -> 
+                                val d = oilDrops[o] ?: 0
+                                if (selectedOils[o] == true && d > 0) ingredientsList.add(Ingredient(o, d, cat))
+                            }
                         }
+                        
+                        if (isEditingExisting) {
+                            val oldPerfume = savedPerfumes.find { it.name == perfumeName }
+                            if (oldPerfume != null) savedPerfumes.remove(oldPerfume)
+                        }
+                        
+                        savedPerfumes.add(SavedPerfume(perfumeName, ingredientsList, perfumeNotes))
+                        currentMode = "list"
+                        isEditingExisting = false
+                    }, 
+                    modifier = Modifier.fillMaxWidth().padding(top = 32.dp), 
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(contentColor = Color.Black)
+                ) { 
+                    Text(if (isEditingExisting) "Spara ändringar" else "Spara och slutför") 
+                }
+
+                if (isEditingExisting) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextButton(onClick = { currentMode = "create" }, modifier = Modifier.fillMaxWidth()) {
+                        Text("Redigera ingredienser", color = Color.Black)
                     }
-                    savedPerfumes.add(SavedPerfume(perfumeName, ingredientsList, perfumeNotes))
-                    currentMode = "list"
-                }, modifier = Modifier.fillMaxWidth().padding(top = 32.dp)) { Text("Spara och slutför") }
+                }
             }
         }
 
@@ -186,13 +251,28 @@ fun ParfymerScreen(
             // Hyllan med parfymer
             Box(modifier = Modifier.fillMaxSize()) {
                 Column(modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp, vertical = 16.dp).verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.Start) {
-                    Button(onClick = onBackClick) { Text("<-") }
+                    Button(
+                        onClick = onBackClick,
+                        colors = ButtonDefaults.buttonColors(contentColor = Color.Black)
+                    ) { Text("<-") }
                     
                     Spacer(modifier = Modifier.height(48.dp))
-                    Text(text = "Mina parfymer", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Button(onClick = { currentMode = "create"; perfumeName = ""; perfumeNotes = ""; selectedOils.clear(); oilDrops.clear(); isDeleteMode = false }, modifier = Modifier.fillMaxWidth().height(64.dp), shape = RoundedCornerShape(16.dp)) {
+                    
+                    // Skapa ny parfym knappen först - VIT TEXT HÄR
+                    Button(
+                        onClick = { 
+                            currentMode = "create"
+                            perfumeName = ""
+                            perfumeNotes = ""
+                            selectedOils.clear()
+                            oilDrops.clear()
+                            isDeleteMode = false
+                            isEditingExisting = false 
+                        }, 
+                        modifier = Modifier.fillMaxWidth().height(64.dp), 
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(contentColor = Color.White)
+                    ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(end = 12.dp)) {
                                 Box(modifier = Modifier.size(10.dp, 4.dp).background(Color.White, RoundedCornerShape(1.dp)))
@@ -203,6 +283,11 @@ fun ParfymerScreen(
                     }
                     
                     Spacer(modifier = Modifier.height(32.dp))
+                    
+                    // Sedan texten "Mina parfymer"
+                    Text(text = "Mina parfymer", style = MaterialTheme.typography.headlineLarge, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, color = Color.Black)
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
                     
                     val chunked = savedPerfumes.chunked(3)
                     chunked.forEach { row ->
@@ -217,6 +302,7 @@ fun ParfymerScreen(
                                         perfumeName = perfume.name; perfumeNotes = perfume.notes
                                         selectedOils.clear(); oilDrops.clear()
                                         perfume.ingredients.forEach { selectedOils[it.name] = true; oilDrops[it.name] = it.drops }
+                                        isEditingExisting = true 
                                         currentMode = "summary"
                                     }
                                 )
@@ -233,16 +319,21 @@ fun ParfymerScreen(
                         onDismissRequest = { perfumeToDelete = null },
                         confirmButton = {
                             Row(modifier = Modifier.fillMaxWidth().padding(8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                                Button(onClick = { perfumeToDelete = null }, modifier = Modifier.weight(1f), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) { Text("Avbryt") }
-                                Button(onClick = { savedPerfumes.remove(perfumeToDelete); perfumeToDelete = null }, modifier = Modifier.weight(1f), colors = ButtonDefaults.buttonColors(containerColor = Color.Red)) { Text("Ta bort") }
+                                Button(onClick = { perfumeToDelete = null }, modifier = Modifier.weight(1f), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = Color.Black)) { Text("Avbryt") }
+                                Button(onClick = { savedPerfumes.remove(perfumeToDelete); perfumeToDelete = null }, modifier = Modifier.weight(1f), colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = Color.Black)) { Text("Ta bort") }
                             }
                         },
-                        title = { Text(text = "Är du säker på att du vill ta bort '${perfumeToDelete?.name}'?", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center) },
+                        title = { Text(text = "Är du säker på att du vill ta bort '${perfumeToDelete?.name}'?", fontWeight = FontWeight.Bold, fontSize = 18.sp, textAlign = TextAlign.Center, color = Color.Black) },
                     )
                 }
 
                 Box(modifier = Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.BottomEnd) {
-                    FloatingActionButton(onClick = { isDeleteMode = !isDeleteMode }, containerColor = if (isDeleteMode) Color.Red else MaterialTheme.colorScheme.secondaryContainer, contentColor = if (isDeleteMode) Color.White else MaterialTheme.colorScheme.onSecondaryContainer, shape = CircleShape) {
+                    FloatingActionButton(
+                        onClick = { isDeleteMode = !isDeleteMode }, 
+                        containerColor = if (isDeleteMode) Color.Red else MaterialTheme.colorScheme.secondaryContainer, 
+                        contentColor = Color.Black, 
+                        shape = CircleShape
+                    ) {
                         Icon(Icons.Default.Delete, "Ta bort")
                     }
                 }
@@ -258,7 +349,7 @@ fun PerfumeBottle(perfume: SavedPerfume, isDeleteMode: Boolean, rotation: Float,
         Box(modifier = Modifier.size(8.dp, 4.dp).background(MaterialTheme.colorScheme.primary.copy(0.3f)))
         Card(modifier = Modifier.fillMaxWidth().height(130.dp), shape = RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp, bottomStart = 20.dp, bottomEnd = 20.dp), colors = CardDefaults.cardColors(containerColor = Color.White), elevation = CardDefaults.cardElevation(2.dp)) {
             Column(modifier = Modifier.padding(6.dp).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = perfume.name, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 14.sp, textAlign = TextAlign.Center)
+                Text(text = perfume.name, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 14.sp, textAlign = TextAlign.Center, color = Color.Black)
                 Spacer(modifier = Modifier.height(4.dp))
                 perfume.ingredients.take(3).forEach { ingredient ->
                     val oilName = ingredient.name.split(" | ")[0]
@@ -268,10 +359,10 @@ fun PerfumeBottle(perfume: SavedPerfume, isDeleteMode: Boolean, rotation: Float,
                             Text(text = ingredient.drops.toString(), color = Color.Black, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.offset(y = 3.dp))
                         }
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = oilName, fontSize = 11.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(text = oilName, fontSize = 11.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, color = Color.Black)
                     }
                 }
-                if (perfume.ingredients.size > 3) Text("...", fontSize = 10.sp)
+                if (perfume.ingredients.size > 3) Text("...", fontSize = 10.sp, color = Color.Black)
             }
         }
     }
@@ -283,11 +374,33 @@ fun MultiSelectDropdown(title: String, options: List<String>, selectedStates: Mu
     var expanded by remember { mutableStateOf(false) }
     val numSelected = options.count { selectedStates[it] == true }
     ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
-        OutlinedTextField(value = if (numSelected > 0) "$title ($numSelected)" else "Välj $title", onValueChange = {}, readOnly = true, trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }, modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth().padding(vertical = 4.dp))
+        OutlinedTextField(
+            value = if (numSelected > 0) "$title ($numSelected)" else "Välj $title", 
+            onValueChange = {}, 
+            readOnly = true, 
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }, 
+            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).width(260.dp).padding(vertical = 4.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
+            )
+        )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             options.forEach { oil ->
                 val displayName = oil.split(" | ")[0]
-                DropdownMenuItem(text = { Row(verticalAlignment = Alignment.CenterVertically) { Checkbox(checked = selectedStates[oil] ?: false, onCheckedChange = null); Spacer(modifier = Modifier.width(8.dp)); Text(displayName) } }, onClick = { selectedStates[oil] = !(selectedStates[oil] ?: false) })
+                DropdownMenuItem(
+                    text = { 
+                        Row(verticalAlignment = Alignment.CenterVertically) { 
+                            Checkbox(checked = selectedStates[oil] ?: false, onCheckedChange = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(displayName, color = Color.Black) 
+                        } 
+                    }, 
+                    onClick = { selectedStates[oil] = !(selectedStates[oil] ?: false) }
+                )
             }
         }
     }

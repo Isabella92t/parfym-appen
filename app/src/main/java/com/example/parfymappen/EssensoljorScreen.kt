@@ -33,7 +33,7 @@ fun IntensityDrops(intensity: String) {
     }
     Row {
         repeat(count) {
-            Text(text = "💧", fontSize = 10.sp)
+            Text(text = "💧", fontSize = 12.sp) // Något större droppar
         }
     }
 }
@@ -43,7 +43,7 @@ fun OilRow(textFromList: String, category: String? = null, isSearch: Boolean = f
     val parts = textFromList.split(" | ")
     val name = parts[0]
     val intensity = if (parts.size > 1) parts[1] else "Mellan"
-    val textColor = if (isSearch) Color.Gray else Color.Unspecified
+    val textColor = if (isSearch) Color.Gray else Color.Black
 
     Row(
         verticalAlignment = Alignment.CenterVertically, 
@@ -52,7 +52,7 @@ fun OilRow(textFromList: String, category: String? = null, isSearch: Boolean = f
         Text("• $name ", style = MaterialTheme.typography.bodyLarge, color = textColor)
         if (category != null) {
             Spacer(modifier = Modifier.width(8.dp))
-            Text(category, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+            Text(category, fontWeight = FontWeight.Normal, style = MaterialTheme.typography.labelSmall, color = textColor)
         }
         Spacer(modifier = Modifier.weight(1f))
         IntensityDrops(intensity)
@@ -80,7 +80,7 @@ fun EssensoljorScreen(
     val selectedCategoriesForAdd = remember { mutableStateMapOf<String, Boolean>() }
 
     val intensities = listOf("Låg", "Mellan", "Hög")
-    var selectedIntensity by remember { mutableStateOf(intensities[1]) }
+    var selectedIntensity by remember { mutableStateOf<String?>(null) }
     var intensityExpanded by remember { mutableStateOf(false) }
 
     Column(
@@ -88,13 +88,18 @@ fun EssensoljorScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            Button(onClick = onBackClick, modifier = Modifier.align(Alignment.TopStart)) { Text("<-") }
+            Button(
+                onClick = onBackClick, 
+                modifier = Modifier.align(Alignment.TopStart),
+                colors = ButtonDefaults.buttonColors(contentColor = Color.Black)
+            ) { Text("<-") }
         }
 
         Text(
             text = "ETERISKA OLJOR", 
             style = MaterialTheme.typography.headlineLarge.copy(fontSize = 38.sp), 
             fontWeight = FontWeight.Black,
+            color = Color.Black,
             modifier = Modifier.padding(vertical = 24.dp)
         )
 
@@ -102,17 +107,26 @@ fun EssensoljorScreen(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             modifier = Modifier.width(260.dp).padding(bottom = 24.dp),
-            placeholder = { Text("Sök olja...") },
-            leadingIcon = { Icon(Icons.Default.Search, null) },
+            placeholder = { Text("Sök olja...", color = Color.Gray) },
+            leadingIcon = { Icon(Icons.Default.Search, null, tint = Color.Black) },
             singleLine = true,
-            shape = RoundedCornerShape(24.dp)
+            shape = RoundedCornerShape(24.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black
+            )
         )
 
         if (searchQuery.isNotEmpty()) {
             val allOils = topnotOils.map { it to "Topnoter" } + mellannotOils.map { it to "Mellannoter" } + basnotOils.map { it to "Basnoter" } + ovrigtOils.map { it to "Övrigt" }
             val matches = allOils.filter { it.first.startsWith(searchQuery, ignoreCase = true) }
             if (matches.isNotEmpty()) {
-                Card(modifier = Modifier.width(260.dp).padding(bottom = 24.dp)) {
+                Card(
+                    modifier = Modifier.width(260.dp).padding(bottom = 24.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFEDF6FF))
+                ) {
                     Column(modifier = Modifier.padding(12.dp)) {
                         matches.forEach { (text, cat) -> OilRow(text, category = cat, isSearch = true) }
                     }
@@ -123,10 +137,13 @@ fun EssensoljorScreen(
         Button(
             onClick = { 
                 selectedCategoriesForAdd.clear()
+                selectedIntensity = null
+                newOilName = ""
                 showAddDialog = true 
             },
             modifier = Modifier.width(180.dp).height(50.dp),
-            shape = RoundedCornerShape(12.dp)
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(contentColor = Color.Black)
         ) {
             Icon(Icons.Default.Add, null)
             Spacer(Modifier.width(8.dp))
@@ -139,9 +156,10 @@ fun EssensoljorScreen(
             Button(
                 onClick = { selectedCategory = category; showListDialog = true }, 
                 modifier = Modifier.width(180.dp).padding(vertical = 12.dp),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(contentColor = Color.Black)
             ) {
-                Text(text = category, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                Text(text = category, fontSize = 22.sp, fontWeight = FontWeight.Normal)
             }
         }
     }
@@ -149,7 +167,8 @@ fun EssensoljorScreen(
     if (showListDialog) {
         AlertDialog(
             onDismissRequest = { showListDialog = false },
-            title = { Text("Oljor i $selectedCategory") },
+            containerColor = Color.White,
+            title = { Text("Oljor i $selectedCategory", color = Color.Black) },
             text = {
                 val list = when(selectedCategory) {
                     "Topnoter" -> topnotOils
@@ -159,18 +178,31 @@ fun EssensoljorScreen(
                 }
                 Column(modifier = Modifier.fillMaxWidth()) { list.forEach { OilRow(it) } }
             },
-            confirmButton = { TextButton(onClick = { showListDialog = false }) { Text("Stäng") } }
+            confirmButton = { TextButton(onClick = { showListDialog = false }) { Text("Stäng", color = Color.Black) } }
         )
     }
 
     if (showAddDialog) {
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
-            title = { Text("Lägg till ny olja") },
+            containerColor = Color.White,
+            title = { Text("Lägg till ny olja", color = Color.Black) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TextField(value = newOilName, onValueChange = { newOilName = it }, label = { Text("Namn") }, modifier = Modifier.fillMaxWidth())
-                    Text("Välj kategorier:")
+                    OutlinedTextField(
+                        value = newOilName, 
+                        onValueChange = { newOilName = it }, 
+                        label = { Text("Namn", color = Color.Gray) }, 
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = Color.White,
+                            focusedContainerColor = Color.White,
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black
+                        )
+                    )
+                    Text("Välj kategorier:", color = Color.Black)
                     categories.forEach { cat ->
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Checkbox(
@@ -179,24 +211,50 @@ fun EssensoljorScreen(
                                     selectedCategoriesForAdd[cat] = isChecked 
                                 }
                             )
-                            Text(cat)
+                            Text(cat, color = Color.Black)
                         }
                     }
-                    Text("Intensitet:")
+                    Text("Intensitet:", color = Color.Black)
                     ExposedDropdownMenuBox(expanded = intensityExpanded, onExpandedChange = { intensityExpanded = !intensityExpanded }) {
                         OutlinedTextField(
-                            value = selectedIntensity, onValueChange = {}, readOnly = true,
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(intensityExpanded) },
-                            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth()
+                            value = selectedIntensity ?: "", 
+                            onValueChange = {}, 
+                            readOnly = true,
+                            textStyle = LocalTextStyle.current.copy(fontSize = 18.sp, color = Color.Black),
+                            placeholder = { Text("Välj intensitet", color = Color.Gray) },
+                            trailingIcon = { 
+                                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = 8.dp)) {
+                                    if (selectedIntensity != null) {
+                                        IntensityDrops(selectedIntensity!!)
+                                        Spacer(Modifier.width(8.dp))
+                                    }
+                                    ExposedDropdownMenuDefaults.TrailingIcon(intensityExpanded)
+                                }
+                            },
+                            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                unfocusedContainerColor = Color.White,
+                                focusedContainerColor = Color.White,
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black
+                            )
                         )
-                        ExposedDropdownMenu(expanded = intensityExpanded, onDismissRequest = { intensityExpanded = false }) {
+                        ExposedDropdownMenu(
+                            expanded = intensityExpanded, 
+                            onDismissRequest = { intensityExpanded = false },
+                            containerColor = Color.White
+                        ) {
                             intensities.forEach { intensity ->
                                 DropdownMenuItem(
                                     text = { 
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Text(intensity, fontSize = 18.sp, color = Color.Black) 
                                             IntensityDrops(intensity)
-                                            Spacer(Modifier.width(8.dp))
-                                            Text(intensity) 
                                         }
                                     }, 
                                     onClick = { selectedIntensity = intensity; intensityExpanded = false }
@@ -207,19 +265,24 @@ fun EssensoljorScreen(
                 }
             },
             confirmButton = {
-                Button(onClick = {
-                    if (newOilName.isNotBlank()) {
-                        val savedText = "$newOilName | $selectedIntensity"
-                        if (selectedCategoriesForAdd["Topnoter"] == true) topnotOils.add(savedText)
-                        if (selectedCategoriesForAdd["Mellannoter"] == true) mellannotOils.add(savedText)
-                        if (selectedCategoriesForAdd["Basnoter"] == true) basnotOils.add(savedText)
-                        if (selectedCategoriesForAdd["Övrigt"] == true) ovrigtOils.add(savedText)
-                    }
-                    showAddDialog = false
-                    newOilName = ""
-                }) { Text("Spara") }
+                Button(
+                    onClick = {
+                        if (newOilName.isNotBlank() && selectedIntensity != null) {
+                            val savedText = "$newOilName | $selectedIntensity"
+                            if (selectedCategoriesForAdd["Topnoter"] == true) topnotOils.add(savedText)
+                            if (selectedCategoriesForAdd["Mellannoter"] == true) mellannotOils.add(savedText)
+                            if (selectedCategoriesForAdd["Basnoter"] == true) basnotOils.add(savedText)
+                            if (selectedCategoriesForAdd["Övrigt"] == true) ovrigtOils.add(savedText)
+                            showAddDialog = false
+                            newOilName = ""
+                            selectedIntensity = null
+                        }
+                    }, 
+                    enabled = newOilName.isNotBlank() && selectedIntensity != null,
+                    colors = ButtonDefaults.buttonColors(contentColor = Color.Black)
+                ) { Text("Spara") }
             },
-            dismissButton = { TextButton(onClick = { showAddDialog = false }) { Text("Avbryt") } }
+            dismissButton = { TextButton(onClick = { showAddDialog = false }) { Text("Avbryt", color = Color.Black) } }
         )
     }
 }
@@ -232,6 +295,6 @@ fun EssensoljorScreenPreview() {
     val bas = remember { mutableStateListOf<String>() }
     val ovrigt = remember { mutableStateListOf<String>() }
     ParfymAppenTheme { 
-        EssensoljorScreen(onBackClick = {}, topnotOils = top, mellannotOils = mellan, basnotOils = bas, ovrigtOils = ovrigt) 
+        EssensoljorScreen(onBackClick = {}, topnotOils = top, mellannotOils = mellan, basnotOils = bas, ovrigtOils = ovrigt)
     }
 }

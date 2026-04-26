@@ -8,7 +8,7 @@ ParfymAppen är en Android-applikation byggd med Jetpack Compose som hjälper pa
 -   **Intensitetsmätning**: Ange intensitet (Låg, Mellan, Hög) för varje olja med visuella dropp-indikatorer.
 -   **Sökfunktion**: Hitta snabbt rätt olja i ditt bibliotek.
 -   **Receptskapare**: Komponera parfymer genom att välja ingredienser och ange antal droppar.
--   **Automatisk Procentberäkning**: Appen räknar ut den procentuella fördelningen mellan topp-, mellan- och basnoter i realtid.
+-   **Automatisk Procentberäkning**: Appen räknar ut den procentuella fördelningen mellan topp-, mellan-, basnoter och övrigt i realtid.
 -   **Doft-hyllan**: Visualisera dina sparade parfymer på en snygg "hylla" med egna flaskor.
 -   **Lokal Lagring**: Dina oljor och recept sparas automatiskt på enheten.
 
