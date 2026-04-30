@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+
+val LightGreen = Color(0xFFA5D6A7)
+
 private val DarkColorScheme = darkColorScheme(
     primary = BluePrimary,
     secondary = BlueSecondary,
@@ -31,6 +34,8 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
 )
+
+
 
 @Composable
 fun ParfymAppenTheme(

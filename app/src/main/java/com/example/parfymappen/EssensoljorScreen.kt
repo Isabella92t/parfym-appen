@@ -209,7 +209,7 @@ fun EssensoljorScreen(
             },
             modifier = Modifier.width(135.dp).height(50.dp),
             shape = commonShape,
-            colors = ButtonDefaults.buttonColors(containerColor = buttonBlue, contentColor = Color.Black),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF81C784), contentColor = Color.Black),
             border = BorderStroke(1.dp, Color.Black)
         ) {
             Text("+ Olja", fontSize = 22.sp)
@@ -220,7 +220,7 @@ fun EssensoljorScreen(
         // kategoriknappar
         categories.forEach { category ->
             Button(
-                onClick = { selectedCategory = category; showListDialog = true }, 
+                onClick = { selectedCategory = category; showListDialog = true },
                 modifier = Modifier.width(220.dp).padding(vertical = 12.dp),
                 shape = commonShape,
                 colors = ButtonDefaults.buttonColors(containerColor = buttonBlue, contentColor = Color.Black),
@@ -244,10 +244,10 @@ fun EssensoljorScreen(
                     "Basnoter" -> basnotOils
                     else -> ovrigtOils
                 }
-                Column(modifier = Modifier.fillMaxWidth()) { 
+                Column(modifier = Modifier.fillMaxWidth()) {
                     list.forEach { oil ->
-                        OilRow(textFromList = oil) 
-                    } 
+                        OilRow(textFromList = oil)
+                    }
                 }
             },
             confirmButton = { 
@@ -262,7 +262,7 @@ fun EssensoljorScreen(
     if (showAddDialog) {
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
-            containerColor = Color(0xFFEDF6FF), 
+            containerColor = Color(0xFFEDF6FF),
             shape = commonShape,
             title = { Text("Lägg till ny olja", color = Color.Black, fontSize = 28.sp, fontWeight = FontWeight.Bold) },
             text = {
