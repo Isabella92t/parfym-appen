@@ -25,12 +25,16 @@ fun MultiSelectDropdown(
     textStyle: TextStyle
 ) {
     var expanded by remember { mutableStateOf(false) }
+
+    // räknar hur många som är valda
     val numSelected = options.count { selectedStates["$title-$it"] == true }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
+
+        // TEXTFÄLTET (det man klickar på)
         OutlinedTextField(
             value = if (numSelected > 0) "$title ($numSelected)" else "Välj $title",
             onValueChange = {},
@@ -54,47 +58,66 @@ fun MultiSelectDropdown(
             )
         )
 
+        // DROPDOWN MENYN
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             containerColor = Color(0xFFFFF8DC),
             modifier = Modifier.border(1.dp, Color.Black, shape)
         ) {
-            options.forEach { oil ->
-                val key = "$title-$oil"
-                val intensity = if (oil.contains(" | ")) oil.split(" | ")[1] else "Mellan"
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            selectedStates[key] =
-                                !(selectedStates[key] ?: false)
-                        }
-                        .padding(16.dp)
-                ) {
-                    Box(
+            // 🔴 NYTT: OM LISTAN ÄR TOM
+            if (options.isEmpty()) {
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = "Inga oljor ännu",
+                            fontSize = 22.sp,
+                            color = Color.Gray
+                        )
+                    },
+                    onClick = {}
+                )
+            }
+
+            // 🔵 ANNARS VISA OLJOR
+            else {
+                options.forEach { oil ->
+                    val key = "$title-$oil"
+
+                    Row(
                         modifier = Modifier
-                            .size(36.dp)
-                            .background(Color.White, RoundedCornerShape(4.dp))
-                            .border(BorderStroke(1.dp, Color.Black)),
-                        contentAlignment = Alignment.Center
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedStates[key] =
+                                    !(selectedStates[key] ?: false)
+                            }
+                            .padding(16.dp)
                     ) {
-                        if (selectedStates[key] == true) {
-                            Text("X", fontSize = 28.sp, color = Color.Black)
+
+                        // KRYSSRUTA
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .background(Color.White, RoundedCornerShape(4.dp))
+                                .border(BorderStroke(1.dp, Color.Black)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (selectedStates[key] == true) {
+                                Text("X", fontSize = 28.sp, color = Color.Black)
+                            }
                         }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        // OLJANS NAMN
+                        Text(
+                            oil.split(" | ")[0],
+                            modifier = Modifier.weight(1f),
+                            color = Color.Black,
+                            fontSize = 24.sp
+                        )
                     }
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    Text(
-                        oil.split(" | ")[0],
-                        modifier = Modifier.weight(1f),
-                        color = Color.Black,
-                        fontSize = 24.sp
-                    )
-
-
                 }
             }
         }

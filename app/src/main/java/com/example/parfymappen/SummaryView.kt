@@ -19,15 +19,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SummaryView(
+fun SummaryView( // paramentrar, onback, onedit, onsave - gå tillbaka, gå tillbaka och ändra, spara
     onBack: () -> Unit,
     onEditOils: () -> Unit,
     name: String,
-    notes: String,
+    notes: String, // notes styr parfymens namn och anteckningar
     onNotesChange: (String) -> Unit,
     onSave: () -> Unit,
-    selectedOils: MutableMap<String, Boolean>,
-    oilDrops: MutableMap<String, Int>,
+    selectedOils: MutableMap<String, Boolean>, // vilja oljor som är valda
+    oilDrops: MutableMap<String, Int>, // håller koll på hur många droppar av varje olja
     topnotOils: List<String>,
     mellannotOils: List<String>,
     basnotOils: List<String>,
@@ -47,11 +47,11 @@ fun SummaryView(
         mellannotOils to "Mellannoter",
         basnotOils to "Basnoter",
         ovrigtOils to "Övrigt"
-    ).forEach { (list, catName) ->
+    ).forEach { (list, catName) -> // här skapas key
         list.forEach { oil ->
             val key = "$catName-$oil"
             if (selectedOils[key] == true) {
-                val d = oilDrops[key] ?: 0
+                val d = oilDrops[key] ?: 0 // droppas hämtas
                 total += d
                 when (catName) {
                     "Topnoter" -> t += d
@@ -63,13 +63,13 @@ fun SummaryView(
         }
     }
 
-    Column(
+    Column( // uppifrån och ner
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Button(
+        Button( //bakåtknapp
             onClick = onBack,
             modifier = Modifier.size(48.dp),
             colors = ButtonDefaults.buttonColors(
@@ -86,14 +86,14 @@ fun SummaryView(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = name,
+            text = name, //namn på parfym
             style = MaterialTheme.typography.headlineLarge,
             color = Color.Black
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Card(
+        Card( //box med design
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, Color.Black, shape),
@@ -102,14 +102,14 @@ fun SummaryView(
                 containerColor = Color(0xFFE3F2FD)
             )
         ) {
-            Row(
+            Row( // saker bredvid varandra
                 modifier = Modifier
                     .padding(12.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                listOf("Topp" to t, "Mellan" to m, "Bas" to b, "Övrigt" to o)
-                    .forEach { (label, drops) ->
+                listOf("Topp" to t, "Mellan" to m, "Bas" to b, "Övrigt" to o)  // procentdelen
+                    .forEach { (label, drops) -> // loopar koden igenom varje kategori, först topnoter med droppar, sen mellannoter med droppar osv.
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
                                 text = label,
@@ -118,8 +118,7 @@ fun SummaryView(
                                 color = Color.Black
                             )
                             Text(
-                                "${if (total > 0) (drops * 100) / total else 0}%",
-                                fontWeight = FontWeight.Bold,
+                                "${if (total > 0) (drops * 100) / total else 0}%", //procent
                                 fontSize = 18.sp
                             )
                         }
@@ -129,22 +128,22 @@ fun SummaryView(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        listOf(
+        listOf( // går igenom alla oljekategorier
             topnotOils to "Topnoter",
             mellannotOils to "Mellannoter",
             basnotOils to "Basnoter",
             ovrigtOils to "Övrigt"
-        ).forEach { (list, cat) ->
-            list.filter { selectedOils["$cat-$it"] == true }.forEach { oil ->
-                val key = "$cat-$oil"
-                val current = oilDrops[key] ?: 0
-                val intensity = if (oil.contains(" | ")) {
+        ).forEach { (list, cat) -> // loopar igenom varje kategori
+            list.filter { selectedOils["$cat-$it"] == true }.forEach { oil -> // filtrer fram endast valda oljor
+                val key = "$cat-$oil" // skapar key för oljan
+                val current = oilDrops[key] ?: 0 // antal droppar hämtas för just den oljan
+                val intensity = if (oil.contains(" | ")) { // här hämtas intensitet från oljetexten
                     oil.split(" | ")[1]
                 } else {
                     "Mellan"
                 }
 
-                Row(
+                Row( // här skapas en rad för varje olja
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 12.dp),
@@ -153,7 +152,7 @@ fun SummaryView(
                     Column(modifier = Modifier.weight(1f)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = oil.split(" | ")[0],
+                                text = oil.split(" | ")[0],  //oljenamn och kategori
                                 fontSize = 24.sp,
                                 color = Color.Black
                             )
@@ -173,7 +172,7 @@ fun SummaryView(
 
                     IconButton(
                         onClick = {
-                            if (current > 0) oilDrops[key] = current - 1
+                            if (current > 0) oilDrops[key] = current - 1 // minusknappen vid droppen
                         }
                     ) {
                         Text(
@@ -188,20 +187,20 @@ fun SummaryView(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier.size(75.dp)
                     ) {
-                        Text("💧", fontSize = 60.sp)
+                        Text("💧", fontSize = 50.sp) // stora droppen
 
                         Text(
                             text = current.toString(),
                             color = Color.Black,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.ExtraBold,
-                            modifier = Modifier.offset(y = 10.dp)
+                            modifier = Modifier.offset(y = 10.dp) // visar antal droppar
                         )
                     }
 
                     IconButton(
                         onClick = {
-                            oilDrops[key] = current + 1
+                            oilDrops[key] = current + 1 // plusknappen vid droppen
                         }
                     ) {
                         Text(
@@ -219,11 +218,11 @@ fun SummaryView(
 
         OutlinedTextField(
             value = notes,
-            onValueChange = onNotesChange,
+            onValueChange = onNotesChange, // anteckningar om parfymen
             placeholder = {
                 Text("Övriga anteckningar", color = Color.Gray, fontSize = 24.sp)
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),  // textfältet
             minLines = 3,
             shape = shape,
             textStyle = textStyle,
@@ -234,10 +233,10 @@ fun SummaryView(
                 unfocusedTextColor = Color.Black,
                 focusedBorderColor = Color.Black,
                 unfocusedBorderColor = Color.Black
-            )
+            ) // colors styr hur textfältet ser ut beroende på om det är aktivt eller inte
         )
 
-        Button(
+        Button( // spara knappen
             onClick = onSave,
             modifier = Modifier
                 .fillMaxWidth()
@@ -254,7 +253,7 @@ fun SummaryView(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Button(
+        Button( // redigera oljor knapp
             onClick = onEditOils,
             modifier = Modifier.fillMaxWidth(),
             shape = shape,

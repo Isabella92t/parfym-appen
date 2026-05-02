@@ -1,8 +1,8 @@
-
 package com.example.parfymappen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,11 +10,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -25,34 +24,40 @@ import androidx.compose.ui.unit.sp
 fun PerfumeBottle(
     perfume: SavedPerfume,
     isDeleteMode: Boolean,
-    rotation: Float,
+    rotation: Float, // behålls för kompatibilitet
     onDelete: () -> Unit,
     onOpen: () -> Unit
+
+    //sparad parfym som en liten flaska
 ) {
+    var selectedForDelete by remember { mutableStateOf(false) } // håller koll på om flaskan markerats för borttagning
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .width(95.dp)
-            .graphicsLayer {
-                rotationZ = if (isDeleteMode) rotation else 0f
-            }
             .clickable {
-                if (isDeleteMode) onDelete() else onOpen()
+                if (isDeleteMode) {
+                    selectedForDelete = true
+                    onDelete()
+                } else {
+                    onOpen()
+                }
             }
     ) {
-        Box(
+        Box( // kork och hals
             modifier = Modifier
                 .size(16.dp, 5.dp)
                 .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(1.dp))
         )
 
         Box(
-            modifier = Modifier
+            modifier = Modifier // flaskans hals
                 .size(8.dp, 4.dp)
                 .background(MaterialTheme.colorScheme.primary.copy(0.3f))
         )
 
-        Card(
+        Card( // själva flaskkroppen
             modifier = Modifier
                 .fillMaxWidth()
                 .height(130.dp),
@@ -66,14 +71,12 @@ fun PerfumeBottle(
             elevation = CardDefaults.cardElevation(2.dp),
             border = BorderStroke(1.dp, Color.Black)
         ) {
-
             Box(modifier = Modifier.fillMaxSize()) {
 
-                // VÄTSKA
                 Box(
-                    modifier = Modifier
+                    modifier = Modifier // vätskan i flaskan
                         .fillMaxWidth()
-                        .fillMaxHeight(0.85f) // nivå vätska (85%)
+                        .fillMaxHeight(0.85f)
                         .align(Alignment.BottomCenter)
                         .background(
                             Color(0xFFB8E0FF).copy(alpha = 0.75f),
@@ -84,8 +87,30 @@ fun PerfumeBottle(
                         )
                 )
 
-                // 📝 TEXT ovanpå
-                Column(
+                if (isDeleteMode) { // visas om papperskorgläget är aktivt
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(6.dp)
+                            .size(24.dp)
+                            .background(Color.White, RoundedCornerShape(4.dp))
+                            .border(
+                                BorderStroke(1.dp, Color.Black),
+                                RoundedCornerShape(4.dp)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (selectedForDelete) {
+                            Text(
+                                text = "X", // visas när flaskan klickats i
+                                fontSize = 16.sp,
+                                color = Color.Black
+                            )
+                        }
+                    }
+                }
+
+                Column( // text i flaskan
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(6.dp),
@@ -102,14 +127,12 @@ fun PerfumeBottle(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    perfume.ingredients.take(3).forEach { ing ->
-                        Row(verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
+                    perfume.ingredients.take(3).forEach { ing -> // visa bara 3 först ingredienser
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Text("💧", fontSize = 10.sp)
-
+                            Spacer(Modifier.width(2.dp))
                             Text(
-                                text = ing.name.split(" | ")[0],
+                                text = ing.name.split(" | ")[0], // ingrediensens namn
                                 fontSize = 15.sp,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis

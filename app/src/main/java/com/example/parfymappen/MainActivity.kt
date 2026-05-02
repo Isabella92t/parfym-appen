@@ -30,46 +30,46 @@ import com.example.parfymappen.ui.theme.ParfymAppenTheme
 import org.json.JSONArray
 import org.json.JSONObject
 
-data class Ingredient(val name: String, val drops: Int, val category: String)
-data class SavedPerfume(val name: String, val ingredients: List<Ingredient>, val notes: String)
+data class Ingredient(val name: String, val drops: Int, val category: String) //ingredienser i parfym, namn, droppar, kategori
+data class SavedPerfume(val name: String, val ingredients: List<Ingredient>, val notes: String) // sparad parfym
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPrefs = getSharedPreferences("ParfymAppenPrefs", Context.MODE_PRIVATE)
+        val sharedPrefs = getSharedPreferences("ParfymAppenPrefs", Context.MODE_PRIVATE) // sparar data lokalt i mobilen
 
         enableEdgeToEdge()
         setContent {
             ParfymAppenTheme {
-                var currentScreen by remember { mutableStateOf("welcome") }
+                var currentScreen by remember { mutableStateOf("welcome") }  // listor
 
                 val topnotOils = remember { mutableStateListOf<String>() }
                 val mellannotOils = remember { mutableStateListOf<String>() }
                 val basnotOils = remember { mutableStateListOf<String>() }
                 val ovrigtOils = remember { mutableStateListOf<String>() }
-                val savedPerfumes = remember { mutableStateListOf<SavedPerfume>() }
+                val savedPerfumes = remember { mutableStateListOf<SavedPerfume>() } // minne medan appen körs
 
                 LaunchedEffect(Unit) {
-                    loadAppData(sharedPrefs, topnotOils, mellannotOils, basnotOils, ovrigtOils, savedPerfumes)
+                    loadAppData(sharedPrefs, topnotOils, mellannotOils, basnotOils, ovrigtOils, savedPerfumes) // ladda data när appen startar
                 }
 
                 LaunchedEffect(topnotOils.size, mellannotOils.size, basnotOils.size, ovrigtOils.size, savedPerfumes.size) {
-                    saveAppData(sharedPrefs, topnotOils, mellannotOils, basnotOils, ovrigtOils, savedPerfumes)
+                    saveAppData(sharedPrefs, topnotOils, mellannotOils, basnotOils, ovrigtOils, savedPerfumes) // sparar datan automatiskt när listorna ändras
                 }
 
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    Scaffold(modifier = Modifier.fillMaxSize(), containerColor = Color.Transparent) { innerPadding ->
-                        Box(modifier = Modifier.padding(innerPadding)) {
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {   // appens bakgrundsyta
+                    Scaffold(modifier = Modifier.fillMaxSize(), containerColor = Color.Transparent) { innerPadding -> // standarstruktur
+                        Box(modifier = Modifier.padding(innerPadding)) { // för att lägga bakgrundsbilden bakom skärmarna
                             Image(
-                                painter = painterResource(id = R.drawable.img),
+                                painter = painterResource(id = R.drawable.img),  // bakgrundsbild
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop,
-                                alpha = 0.2f
+                                alpha = 0.2f // genomskinlig
                             )
 
-                            when (currentScreen) {
+                            when (currentScreen) { // navigation, visar rätt skärm beroende på värde i currentscreen
                                 "welcome" -> StartScreen(
                                     onEnterClick = { currentScreen = "start" }
                                 )
@@ -108,32 +108,32 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun saveAppData(
-        prefs: SharedPreferences,
+    private fun saveAppData(  // sparar appens data i mobilen
+        prefs: SharedPreferences, //platsen där datan skapas
         top: List<String>,
         mellan: List<String>,
         bas: List<String>,
-        ovrigt: List<String>,
-        perfumes: List<SavedPerfume>
+        ovrigt: List<String>,   // listor med oljor
+        perfumes: List<SavedPerfume> // listan med sparade parfymer
     ) {
-        val oilsJson = JSONObject().apply {
+        val oilsJson = JSONObject().apply { // här sparas oljorna - de görs om till JSON
             put("top", JSONArray(top))
             put("mellan", JSONArray(mellan))
             put("bas", JSONArray(bas))
             put("ovrigt", JSONArray(ovrigt))
         }
 
-        val perfumesArray = JSONArray()
+        val perfumesArray = JSONArray() // sparar parfymerna
 
         perfumes.forEach { p ->
             val pObj = JSONObject().apply {
                 put("name", p.name)
                 put("notes", p.notes)
 
-                val ingArray = JSONArray()
+                val ingArray = JSONArray() // skapar ett JSON-objekt för en parfym
                 p.ingredients.forEach {
                     ingArray.put(
-                        JSONObject().apply {
+                        JSONObject().apply { // JSON-lista med parfymens ingredienser
                             put("name", it.name)
                             put("drops", it.drops)
                             put("category", it.category)
@@ -144,16 +144,16 @@ class MainActivity : ComponentActivity() {
                 put("ingredients", ingArray)
             }
 
-            perfumesArray.put(pObj)
+            perfumesArray.put(pObj) // lägger ingredienslista i parfymobjektet
         }
 
         prefs.edit()
             .putString("oils_data", oilsJson.toString())
             .putString("perfumes_data", perfumesArray.toString())
-            .apply()
+            .apply() // här sparas datan i SharedPreferences, eftersom den sparar text så används .toString
     }
 
-    private fun loadAppData(
+    private fun loadAppData(  // läser tillbaka data från mobilen och fyller listorna igen
         prefs: SharedPreferences,
         top: SnapshotStateList<String>,
         mellan: SnapshotStateList<String>,
@@ -161,21 +161,21 @@ class MainActivity : ComponentActivity() {
         ovrigt: SnapshotStateList<String>,
         perfumes: SnapshotStateList<SavedPerfume>
     ) {
-        prefs.getString("oils_data", null)?.let {
+        prefs.getString("oils_data", null)?.let { // hämtar text från sparat sen innan, null om inget finns sparat
             val json = JSONObject(it)
 
             val fill = { arr: JSONArray, list: SnapshotStateList<String> ->
                 list.clear()
                 for (i in 0 until arr.length()) {
-                    list.add(arr.getString(i))
+                    list.add(arr.getString(i)) // funktion som tömmer listan, lägger in alla värden från JSON
                 }
             }
 
-            fill(json.getJSONArray("top"), top)
+            fill(json.getJSONArray("top"), top) // fyll listorna - tar JSON - lägger in i listorna
             fill(json.getJSONArray("mellan"), mellan)
             fill(json.getJSONArray("bas"), bas)
             fill(json.getJSONArray("ovrigt"), ovrigt)
-        } ?: run {
+        } ?: run { // om ingen data finns så kör detta:
             top.add("Citron | Mellan")
             top.add("Apelsin | Låg")
             mellan.add("Lavendel | Mellan")
@@ -184,27 +184,27 @@ class MainActivity : ComponentActivity() {
             bas.add("Vanilj | Mellan")
         }
 
-        prefs.getString("perfumes_data", null)?.let {
+        prefs.getString("perfumes_data", null)?.let { // ladda parfymer, hämtar sparade
             val array = JSONArray(it)
-            perfumes.clear()
+            perfumes.clear() // gör text till JSON-array
 
             for (i in 0 until array.length()) {
-                val obj = array.getJSONObject(i)
+                val obj = array.getJSONObject(i) // loopar genom varje parfym, hämtar en i taget
                 val ingredients = mutableListOf<Ingredient>()
-                val ingArray = obj.getJSONArray("ingredients")
+                val ingArray = obj.getJSONArray("ingredients") //hämtar ingredienslistan
 
                 for (j in 0 until ingArray.length()) {
-                    val ing = ingArray.getJSONObject(j)
+                    val ing = ingArray.getJSONObject(j) // loopar genom ingredienser
                     ingredients.add(
                         Ingredient(
                             ing.getString("name"),
                             ing.getInt("drops"),
-                            ing.getString("category")
+                            ing.getString("category") //skapar ingrediens
                         )
                     )
                 }
 
-                perfumes.add(
+                perfumes.add( // skapar parfym
                     SavedPerfume(
                         obj.getString("name"),
                         ingredients,
@@ -217,14 +217,14 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun HomeScreen(
+fun HomeScreen( // appens huvudmeny efter startsida, funktioner som körs när användaren klickar på knapparna
     onEteriskaOljorClick: () -> Unit,
     onParfymerClick: () -> Unit,
     onInformationClick: () -> Unit
 ) {
-    val commonShape = RoundedCornerShape(100.dp)
+    val commonShape = RoundedCornerShape(100.dp) // rundande hörn
 
-    Column(
+    Column( // placerar menyvalen vertikalt och centrerat
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
@@ -233,7 +233,7 @@ fun HomeScreen(
     ) {
         Spacer(modifier = Modifier.weight(0.8f))
 
-        Box(
+        Box(   // menyknapp
             modifier = Modifier
                 .width(320.dp)
                 .clickable { onEteriskaOljorClick() }
@@ -252,7 +252,7 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        Box(
+        Box( // menyknapp
             modifier = Modifier
                 .width(320.dp)
                 .clickable { onParfymerClick() }
@@ -271,7 +271,7 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        Box(
+        Box( // menyknapp
             modifier = Modifier
                 .width(320.dp)
                 .clickable { onInformationClick() }

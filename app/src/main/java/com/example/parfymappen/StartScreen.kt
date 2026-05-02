@@ -21,20 +21,19 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun StartScreen(onEnterClick: () -> Unit) {
     val commonShape = RoundedCornerShape(100.dp)
-    val goldColor = Color(0xFFDAA520)
-    val lightGoldBg = Color(0xFFFFF9E3) // Mycket ljus guldig bakgrund
+
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { onEnterClick() } // hela skärmen klickbar för att gå vidare
+            .clickable { onEnterClick() } // hela skärmen är klickbar för att komma vidare
     ) {
         // bild som täcker hela skärmen med genomskinlighet
         Image(
             painter = painterResource(id = R.drawable.img),
             contentDescription = "Background",
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Crop, //fyller hela skärmen
             alpha = 0.7f
         )
 
@@ -47,16 +46,16 @@ fun StartScreen(onEnterClick: () -> Unit) {
 
             Box(
                 modifier = Modifier
-                    .width(300.dp) // kontrollera bredd här istället
-                    .height(90.dp) // snygg knapphöjd
+                    .width(300.dp)
+                    .height(90.dp)
                     .background(Color(0xFFFFE8A3).copy(alpha = 0.6f), commonShape)
                     .border(BorderStroke(1.dp, Color.Black), commonShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "START",
-                    fontSize = 55.sp, // lite mer balanserad
-                    fontWeight = FontWeight.Medium,
+                    fontSize = 55.sp,
+                    fontWeight = FontWeight.Normal,
                     color = Color.Black
                 )
             }

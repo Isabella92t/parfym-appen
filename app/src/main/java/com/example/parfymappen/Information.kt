@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun InformationScreen(onBackClick: () -> Unit) {
+fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
     val commonShape = RoundedCornerShape(12.dp)
 
     Column(

@@ -19,29 +19,29 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddOilDialog(
+fun AddOilDialog( // start av funktion
     onDismiss: () -> Unit,
     topnotOils: SnapshotStateList<String>,
     mellannotOils: SnapshotStateList<String>,
     basnotOils: SnapshotStateList<String>,
-    ovrigtOils: SnapshotStateList<String>,
-    commonShape: RoundedCornerShape,
-    buttonBlue: Color,
+    ovrigtOils: SnapshotStateList<String>, //listor där oljor sparas
+    commonShape: RoundedCornerShape, //rundade hörn
+    buttonBlue: Color, //färg till knappar
     inputTextStyle: TextStyle,
     labelTextStyle: TextStyle
 ) {
-    var newOilName by remember { mutableStateOf("") }
-    var selectedIntensity by remember { mutableStateOf<String?>(null) }
-    var intensityExpanded by remember { mutableStateOf(false) }
+    var newOilName by remember { mutableStateOf("") } // sparar det användaren skriver
+    var selectedIntensity by remember { mutableStateOf<String?>(null) } // sparar vald intensitet
+    var intensityExpanded by remember { mutableStateOf(false) } // styr dropdown, false=stängd, true=öppen
 
     val categories = listOf("Topnoter", "Mellannoter", "Basnoter", "Övrigt")
     val selectedCategoriesForAdd = remember { mutableStateMapOf<String, Boolean>() }
-    val intensities = listOf("Låg", "Mellan", "Hög")
+    val intensities = listOf("Låg", "Mellan", "Hög") // val för dropdowns
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
+    AlertDialog( // pop-up rutan
+        onDismissRequest = onDismiss, // stängs när man klickar utanför
         containerColor = Color(0xFFEDF6FF),
-        shape = commonShape,
+        shape = commonShape, //rundande hörn
         title = {
             Text(
                 "Lägg till ny olja",
@@ -50,17 +50,17 @@ fun AddOilDialog(
                 fontWeight = FontWeight.Bold
             )
         },
-        text = {
+        text = { // text innehåll
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
-                OutlinedTextField(
-                    value = newOilName,
-                    onValueChange = { newOilName = it },
+                OutlinedTextField( // namnfältet
+                    value = newOilName, // visar text som finns sparat
+                    onValueChange = { newOilName = it }, // varje gång användare skriver ändras newoilname
                     placeholder = {
                         Text("Namn", color = Color.Gray, fontSize = 24.sp)
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = commonShape,
+                    shape = commonShape, // rundade hörn
                     textStyle = inputTextStyle,
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = Color.White,
@@ -78,17 +78,17 @@ fun AddOilDialog(
                     fontWeight = FontWeight.Bold
                 )
 
-                categories.forEach { cat ->
+                categories.forEach { cat -> // loop för kategorier
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .padding(vertical = 6.dp)
                             .clickable {
-                                selectedCategoriesForAdd[cat] =
-                                    !(selectedCategoriesForAdd[cat] ?: false)
-                            }
+                                selectedCategoriesForAdd[cat] = // växla mellan vald och inte vald
+                                    !(selectedCategoriesForAdd[cat] ?: false) // om kategori ej finns - false
+                            } // row lägger kryssruta och text bredvid varandra
                     ) {
-                        Box(
+                        Box( // kryssrutan
                             modifier = Modifier
                                 .size(36.dp)
                                 .background(Color.White, RoundedCornerShape(4.dp))
@@ -98,12 +98,12 @@ fun AddOilDialog(
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            if (selectedCategoriesForAdd[cat] == true) {
+                            if (selectedCategoriesForAdd[cat] == true) { // visa x om vald
                                 Text("X", fontSize = 28.sp, color = Color.Black)
                             }
                         }
 
-                        Text(
+                        Text( //kategoritexten
                             text = cat,
                             color = Color.Black,
                             fontSize = 26.sp,
@@ -113,25 +113,25 @@ fun AddOilDialog(
                 }
 
                 Text(
-                    "Intensitet:",
+                    "Intensitet:", // text intensitet
                     style = labelTextStyle,
                     fontWeight = FontWeight.Bold
                 )
 
-                ExposedDropdownMenuBox(
+                ExposedDropdownMenuBox( //dropdownens box
                     expanded = intensityExpanded,
                     onExpandedChange = {
                         intensityExpanded = !intensityExpanded
                     }
                 ) {
-                    OutlinedTextField(
+                    OutlinedTextField( // textfält visar valt dropdown värde
                         onValueChange = {},
                         readOnly = true,
                         textStyle = TextStyle(fontSize = 26.sp, color = Color.Black),
                         placeholder = {
                             Text("Välj intensitet", color = Color.Gray)
                         },
-                        trailingIcon = {
+                        trailingIcon = { // pil ikon
                             ExposedDropdownMenuDefaults.TrailingIcon(intensityExpanded)
                         },
                         value = selectedIntensity?.let { "$it ${"💧".repeat(
@@ -140,13 +140,13 @@ fun AddOilDialog(
                                 "Mellan" -> 2
                                 "Hög" -> 3
                                 else -> 1
-                            }
+                            } // vald intensitet och droppar
                         )}" } ?: "",
                         modifier = Modifier
                             .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                             .fillMaxWidth(),
                         shape = commonShape,
-                        colors = OutlinedTextFieldDefaults.colors(
+                        colors = OutlinedTextFieldDefaults.colors( // design på dropdownfältet
                             unfocusedContainerColor = Color.White,
                             focusedContainerColor = Color.White,
                             focusedTextColor = Color.Black,
@@ -156,12 +156,12 @@ fun AddOilDialog(
                         )
                     )
 
-                    ExposedDropdownMenu(
+                    ExposedDropdownMenu( // dropdownlistan
                         expanded = intensityExpanded,
                         onDismissRequest = { intensityExpanded = false },
                         containerColor = Color.White
                     ) {
-                        intensities.forEach { intensity ->
+                        intensities.forEach { intensity -> // loop för intensiteter
                             DropdownMenuItem(
                                 text = {
                                     Row(
@@ -189,14 +189,14 @@ fun AddOilDialog(
             }
         },
 
-        confirmButton = {
+        confirmButton = { // spara knapp
             Button(
                 onClick = {
                     if (newOilName.isNotBlank()) {
-                        val savedText =
+                        val savedText = // oljan byggs som text
                             "$newOilName | ${selectedIntensity ?: "Mellan"}"
 
-                        if (selectedCategoriesForAdd["Topnoter"] == true) {
+                        if (selectedCategoriesForAdd["Topnoter"] == true) { // lägg till valda kategorier
                             topnotOils.add(savedText)
                         }
                         if (selectedCategoriesForAdd["Mellannoter"] == true) {
@@ -209,16 +209,16 @@ fun AddOilDialog(
                             ovrigtOils.add(savedText)
                         }
 
-                        onDismiss()
+                        onDismiss() // stäng dialogen
                     }
                 },
-                enabled = newOilName.isNotBlank()
+                enabled = newOilName.isNotBlank() // spara knapp - bara aktiv om man skriver namn
             ) {
                 Text("Spara")
             }
         },
 
-        dismissButton = {
+        dismissButton = { // avbryt knapp stänger utan att spara
             TextButton(onClick = onDismiss) {
                 Text("Avbryt")
             }
