@@ -22,130 +22,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-@Composable
-fun IntensityDrops(intensity: String) {
-    val count = when (intensity.trim()) {
-        "Låg" -> 1
-        "Mellan" -> 2
-        "Hög" -> 3
-        else -> 1
-    }
 
-    Row {
-        repeat(count) {
-            Text(text = "💧", fontSize = 16.sp)
-        }
-    }
-}
 
-@Composable
-fun OilRow(textFromList: String, category: String? = null, isSearch: Boolean = false) {
-    val parts = textFromList.split(" | ")
-    val name = parts[0]
-    val intensity = if (parts.size > 1) parts[1] else "Mellan"
-    val textColor = if (isSearch) Color.Gray else Color.Black
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp)
-    ) {
-        Text(
-            text = name,
-            fontSize = 24.sp,
-            color = textColor
-        )
 
-        if (category != null) {
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                category,
-                fontSize = 16.sp,
-                color = textColor
-            )
-        }
 
-        Spacer(modifier = Modifier.weight(1f))
-        IntensityDrops(intensity)
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CategoryDropdown(
-    title: String,
-    oils: SnapshotStateList<String>,
-    commonShape: RoundedCornerShape
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded },
-        modifier = Modifier
-            .width(300.dp)
-            .padding(vertical = 10.dp)
-    ) {
-        OutlinedTextField(
-            value = title,
-            onValueChange = {},
-            readOnly = true,
-            textStyle = TextStyle(
-                fontSize = 28.sp,
-                color = Color.Black,
-                fontWeight = FontWeight.Normal
-            ),
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-            modifier = Modifier
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                .fillMaxWidth(),
-            shape = commonShape,
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color(0xFFB6DFFF),
-                focusedContainerColor = Color(0xFFB6DFFF),
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black
-            )
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            containerColor = Color.White,
-            modifier = Modifier
-                .heightIn(max = 260.dp)
-                .background(Color.White)
-                .border(BorderStroke(1.dp, Color.Black), commonShape)
-        ) {
-            if (oils.isEmpty()) {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            "Inga oljor ännu",
-                            fontSize = 22.sp,
-                            color = Color.Gray
-                        )
-                    },
-                    onClick = {}
-                )
-            } else {
-                oils.forEach { oil ->
-                    DropdownMenuItem(
-                        text = {
-                            OilRow(textFromList = oil)
-                        },
-                        onClick = {}
-                    )
-                }
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -186,7 +67,7 @@ fun EssensoljorScreen(
                     .align(Alignment.TopStart)
                     .size(56.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = buttonBlue,
+                    containerColor = Color.Transparent,
                     contentColor = Color.Black
                 ),
                 border = BorderStroke(1.dp, Color.Black),
@@ -308,16 +189,16 @@ fun EssensoljorScreen(
                 showAddDialog = true
             },
             modifier = Modifier
-                .width(135.dp)
+                .width(110.dp)
                 .height(50.dp),
-            shape = commonShape,
+            shape = RoundedCornerShape(50.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF81C784),
                 contentColor = Color.Black
             ),
             border = BorderStroke(1.dp, Color.Black)
         ) {
-            Text("+ Olja", fontSize = 22.sp)
+            Text("+ Olja", fontSize = 24.sp)
         }
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -346,218 +227,18 @@ fun EssensoljorScreen(
             commonShape = commonShape
         )
     }
-
     if (showAddDialog) {
-        AlertDialog(
-            onDismissRequest = { showAddDialog = false },
-            containerColor = Color(0xFFEDF6FF),
-            shape = commonShape,
-            title = {
-                Text(
-                    "Lägg till ny olja",
-                    color = Color.Black,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
-                        value = newOilName,
-                        onValueChange = { newOilName = it },
-                        placeholder = {
-                            Text("Namn", color = Color.Gray, fontSize = 24.sp)
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = commonShape,
-                        textStyle = inputTextStyle,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedContainerColor = Color.White,
-                            focusedContainerColor = Color.White,
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                            focusedBorderColor = Color.Black,
-                            unfocusedBorderColor = Color.Black
-                        )
-                    )
-
-                    Text(
-                        "Välj kategorier:",
-                        style = labelTextStyle,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    categories.forEach { cat ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .padding(vertical = 6.dp)
-                                .clickable {
-                                    selectedCategoriesForAdd[cat] =
-                                        !(selectedCategoriesForAdd[cat] ?: false)
-                                }
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .background(Color.White, RoundedCornerShape(4.dp))
-                                    .border(
-                                        BorderStroke(1.dp, Color.Black),
-                                        RoundedCornerShape(4.dp)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (selectedCategoriesForAdd[cat] == true) {
-                                    Text(
-                                        "X",
-                                        color = Color.Black,
-                                        fontSize = 28.sp,
-                                        fontWeight = FontWeight.Normal
-                                    )
-                                }
-                            }
-
-                            Text(
-                                text = cat,
-                                color = Color.Black,
-                                fontSize = 26.sp,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
-                    }
-
-                    Text(
-                        "Intensitet:",
-                        style = labelTextStyle,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    ExposedDropdownMenuBox(
-                        expanded = intensityExpanded,
-                        onExpandedChange = {
-                            intensityExpanded = !intensityExpanded
-                        }
-                    ) {
-                        OutlinedTextField(
-                            value = selectedIntensity ?: "",
-                            onValueChange = {},
-                            readOnly = true,
-                            textStyle = inputTextStyle,
-                            placeholder = {
-                                Text(
-                                    "Välj intensitet",
-                                    color = Color.Gray,
-                                    fontSize = 18.sp
-                                )
-                            },
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(intensityExpanded)
-                            },
-                            leadingIcon = {
-                                if (selectedIntensity != null) {
-                                    Box(modifier = Modifier.padding(start = 12.dp)) {
-                                        IntensityDrops(selectedIntensity!!)
-                                    }
-                                }
-                            },
-                            modifier = Modifier
-                                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                                .fillMaxWidth(),
-                            shape = commonShape,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                unfocusedContainerColor = Color.White,
-                                focusedContainerColor = Color.White,
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                focusedBorderColor = Color.Black,
-                                unfocusedBorderColor = Color.Black
-                            )
-                        )
-
-                        ExposedDropdownMenu(
-                            expanded = intensityExpanded,
-                            onDismissRequest = { intensityExpanded = false },
-                            containerColor = Color.White,
-                            shape = commonShape,
-                            modifier = Modifier.border(
-                                BorderStroke(1.dp, Color.Black),
-                                commonShape
-                            )
-                        ) {
-                            intensities.forEach { intensity ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
-                                            Text(
-                                                intensity,
-                                                fontSize = 24.sp,
-                                                color = Color.Black
-                                            )
-                                            IntensityDrops(intensity)
-                                        }
-                                    },
-                                    onClick = {
-                                        selectedIntensity = intensity
-                                        intensityExpanded = false
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        if (newOilName.isNotBlank()) {
-                            val savedText =
-                                "$newOilName | ${selectedIntensity ?: "Mellan"}"
-
-                            if (selectedCategoriesForAdd["Topnoter"] == true) {
-                                topnotOils.add(savedText)
-                            }
-
-                            if (selectedCategoriesForAdd["Mellannoter"] == true) {
-                                mellannotOils.add(savedText)
-                            }
-
-                            if (selectedCategoriesForAdd["Basnoter"] == true) {
-                                basnotOils.add(savedText)
-                            }
-
-                            if (selectedCategoriesForAdd["Övrigt"] == true) {
-                                ovrigtOils.add(savedText)
-                            }
-
-                            showAddDialog = false
-                            newOilName = ""
-                            selectedIntensity = null
-                        }
-                    },
-                    enabled = newOilName.isNotBlank(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = buttonBlue,
-                        contentColor = Color.Black
-                    ),
-                    border = BorderStroke(1.dp, Color.Black),
-                    shape = commonShape
-                ) {
-                    Text("Spara", fontSize = 24.sp)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showAddDialog = false }) {
-                    Text("Avbryt", color = Color.Black, fontSize = 24.sp)
-                }
-            },
-            modifier = Modifier.border(
-                BorderStroke(1.dp, Color.Black),
-                commonShape
-            )
+        AddOilDialog(
+            onDismiss = { showAddDialog = false },
+            topnotOils = topnotOils,
+            mellannotOils = mellannotOils,
+            basnotOils = basnotOils,
+            ovrigtOils = ovrigtOils,
+            commonShape = commonShape,
+            buttonBlue = buttonBlue,
+            inputTextStyle = inputTextStyle,
+            labelTextStyle = labelTextStyle
         )
     }
 }
+

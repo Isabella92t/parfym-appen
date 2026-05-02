@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun StartScreen(onEnterClick: () -> Unit) {
-    val commonShape = RoundedCornerShape(12.dp)
+    val commonShape = RoundedCornerShape(100.dp)
     val goldColor = Color(0xFFDAA520)
     val lightGoldBg = Color(0xFFFFF9E3) // Mycket ljus guldig bakgrund
 
@@ -38,7 +38,7 @@ fun StartScreen(onEnterClick: () -> Unit) {
             alpha = 0.7f
         )
 
-        // START-knapp i en box
+        // Startknapp i en box
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -47,20 +47,22 @@ fun StartScreen(onEnterClick: () -> Unit) {
 
             Box(
                 modifier = Modifier
-                    .background(lightGoldBg, commonShape)
-                    .border(BorderStroke(1.dp, goldColor), commonShape)
-                    .padding(horizontal = 40.dp, vertical = 12.dp),
+                    .width(300.dp) // kontrollera bredd här istället
+                    .height(90.dp) // snygg knapphöjd
+                    .background(Color(0xFFFFE8A3).copy(alpha = 0.6f), commonShape)
+                    .border(BorderStroke(1.dp, Color.Black), commonShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "START",
-                    fontSize = 45.sp,
+                    fontSize = 55.sp, // lite mer balanserad
                     fontWeight = FontWeight.Medium,
-                    color = goldColor
+                    color = Color.Black
                 )
             }
+            Spacer(modifier = Modifier.weight(0.14f))
 
-            Spacer(modifier = Modifier.weight(0.2f))
+
         }
     }
 }
