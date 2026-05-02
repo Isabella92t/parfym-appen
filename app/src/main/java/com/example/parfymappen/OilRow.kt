@@ -11,11 +11,12 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun OilRow(textFromList: String, category: String? = null, isSearch: Boolean = false) {
-    val parts = textFromList.split(" | ") // delan upp olja och intensitet
+    val parts = textFromList.split(" | ") // delar upp olja och intensitet
     val name = parts[0]
     val intensity = if (parts.size > 1) parts[1] else "Mellan"
-    val textColor = if (isSearch) Color.Gray else Color.Black // visar olja plus droppar
-    // isSearch - true grå text , false svart text
+
+    // 🔥 lite mjukare grå för search (mer premium)
+    val textColor = if (isSearch) Color(0xFF888888) else Color.Black
 
     Row( // namn, kategori, droppar på en rad
         verticalAlignment = Alignment.CenterVertically,
@@ -31,6 +32,8 @@ fun OilRow(textFromList: String, category: String? = null, isSearch: Boolean = f
         }
 
         Spacer(modifier = Modifier.weight(1f))
+
+        // dropparna till höger
         IntensityDrops(intensity)
     }
 }

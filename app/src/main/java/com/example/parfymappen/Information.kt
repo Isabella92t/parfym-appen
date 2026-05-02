@@ -55,7 +55,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "Skapa din egen signaturdoft",
             fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             color = Color.Black
         )
 
@@ -64,7 +64,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "Att blanda egen parfym är en kreativ process där du kombinerar intuition med doftens struktur. Genom att använda eteriska oljor skapar du en naturlig och personlig doft utan syntetiska tillsatser.",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 
@@ -73,7 +73,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "Doftnoternas arkitektur",
             fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             color = Color.Black
         )
 
@@ -82,7 +82,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "En balanserad parfym är uppbyggd av tre lager, så kallade noter, som avdunstar olika snabbt:",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 
@@ -91,7 +91,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "• Toppnoter (30%): Det första intrycket. De är lätta, friska och sprudlande, till exempel citron, bergamott eller pepparmynta. De försvinner oftast efter 15–30 minuter.",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 
@@ -100,7 +100,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "• Mellannoter/Hjärtnoter (50%): Doftens karaktär. När toppnoten lagt sig träder hjärtat fram, till exempel lavendel, ros eller kanel. Dessa binder ihop hela doften.",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 
@@ -109,7 +109,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "• Basnoter (20%): Doftens fundament. Tunga och rika noter som ger djup och får parfymen att sitta kvar i timmar, till exempel sandelträ, vanilj eller patchouli.",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 
@@ -118,7 +118,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "Blandningsförhållanden (Eau de Parfum)",
             fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             color = Color.Black
         )
 
@@ -127,7 +127,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "För en Eau de Parfum bör koncentrationen av doftoljor ligga på ca 15–20%. Resten består av en bärarvätska.",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 
@@ -136,7 +136,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "Recept för ca 10 ml:",
             fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             color = Color.Black
         )
 
@@ -145,7 +145,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "• Eteriska oljor: 40–60 droppar totalt för alla noter.",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 
@@ -154,7 +154,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "• Bas: Fyll upp resten med ren alkohol, till exempel finsprit eller luktfri vodka, eller en doftfri olja som jojobaolja för en parfymroller.",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 
@@ -163,7 +163,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "Så gör du:",
             fontSize = 26.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             color = Color.Black
         )
 
@@ -172,7 +172,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "1. Droppa i oljorna: Börja med basnoterna, följt av mellannoterna och avsluta med toppnoterna.",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 
@@ -181,7 +181,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "2. Tillsätt basen: Häll i alkoholen eller bäraroljan och skaka försiktigt.",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 
@@ -190,7 +190,7 @@ fun InformationScreen(onBackClick: () -> Unit) { //informationsvy, bakåtknapp
         Text(
             text = "3. Mognad: Låt flaskan vila mörkt och svalt. Doften utvecklas och “gifter sig” bäst om den får stå i minst 48 timmar, gärna flera veckor.",
             fontSize = 21.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             color = Color.Black
         )
 

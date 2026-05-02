@@ -25,6 +25,9 @@ fun CategoryDropdown(
     isDeleteMode: Boolean,
     onRequestDelete: (String) -> Unit // funktionen som körs ifall man vill ta bort en olja
 ) {
+    val softSilver = Color(0xFFEAEAEA)
+    val lightSilver = Color(0xFFF6F6F6)
+
     var expanded by remember { mutableStateOf(false) } //öppen eller stängd dropdown?
 
     // håller reda på vilken som klickats
@@ -35,7 +38,7 @@ fun CategoryDropdown(
         onExpandedChange = { expanded = !expanded },
         modifier = Modifier
             .width(300.dp)
-            .padding(vertical = 10.dp)
+            .padding(vertical = 20.dp)
     ) {
         OutlinedTextField( // när dropdown stängd
             value = title,
@@ -54,8 +57,8 @@ fun CategoryDropdown(
                 .fillMaxWidth(),
             shape = commonShape,
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color(0xFFFFE8A3).copy(alpha = 0.75f),
-                focusedContainerColor = Color(0xFFFFE8A3).copy(alpha = 0.75f),
+                unfocusedContainerColor = softSilver,
+                focusedContainerColor = softSilver,
                 focusedTextColor = Color.Black,
                 unfocusedTextColor = Color.Black,
                 focusedBorderColor = Color.Black,
@@ -66,10 +69,10 @@ fun CategoryDropdown(
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }, // listan öppnas
-            containerColor = Color(0xFFFFF8DC),
+            containerColor = lightSilver,
             modifier = Modifier
                 .heightIn(max = 260.dp)
-                .background(Color(0xFFFFF8DC))
+                .background(lightSilver)
                 .border(BorderStroke(1.dp, Color.Black), commonShape)
         ) {
             if (oils.isEmpty()) { // om lista tom

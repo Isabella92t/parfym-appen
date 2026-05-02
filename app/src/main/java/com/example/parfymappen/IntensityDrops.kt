@@ -7,16 +7,15 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun IntensityDrops(intensity: String, fontSize: Int = 16) {
-    val count = when (intensity.trim()) { // when - val baserat på värde
+    val count = when (intensity.trim()) {
         "Låg" -> 1
         "Mellan" -> 2
         "Hög" -> 3
         else -> 1
     }
 
-    // bestämmer hur många droppar som ska visas beroende på intensitet
     Row {
-        repeat(count) { //repeat - loopar flera gånger
+        repeat(count) {
             Text(text = "💧", fontSize = fontSize.sp)
         }
     }

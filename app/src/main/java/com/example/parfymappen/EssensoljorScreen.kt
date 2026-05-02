@@ -29,10 +29,14 @@ fun EssensoljorScreen(
     topnotOils: SnapshotStateList<String>,
     mellannotOils: SnapshotStateList<String>,
     basnotOils: SnapshotStateList<String>,
-    ovrigtOils: SnapshotStateList<String> // visar alla eteriska oljor uppdelade i kategorier
+    ovrigtOils: SnapshotStateList<String>
 ) {
-    val commonShape = RoundedCornerShape(12.dp) // designvärden
-    val buttonBlue = Color(0xFFB6DFFF)
+    val commonShape = RoundedCornerShape(12.dp)
+
+    val softSilver = Color(0xFFEAEAEA)
+    val lightSilver = Color(0xFFF6F6F6)
+    val actionGreen = Color(0xFF81C784)
+
     val inputTextStyle = TextStyle(fontSize = 28.sp, color = Color.Black)
     val labelTextStyle = TextStyle(fontSize = 26.sp, color = Color.Black)
 
@@ -40,25 +44,24 @@ fun EssensoljorScreen(
     var newOilName by remember { mutableStateOf("") }
     var searchQuery by remember { mutableStateOf("") }
 
-    var isDeleteMode by remember { mutableStateOf(false) } // papperskorgsläget om aktivt eller inte
+    var isDeleteMode by remember { mutableStateOf(false) }
     var oilToDelete by remember { mutableStateOf<String?>(null) }
     var oilListToDeleteFrom by remember { mutableStateOf<SnapshotStateList<String>?>(null) }
 
     val selectedCategoriesForAdd = remember { mutableStateMapOf<String, Boolean>() }
 
-    // state används för att hålla koll på dialoger, sökning och raderingsläge
-
-    Box(modifier = Modifier.fillMaxSize()) { // för att lägga innehåll ovanpå varandra
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally // allt uppifrån och ner
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             Box(modifier = Modifier.fillMaxWidth()) {
                 Button(
-                    onClick = onBackClick, // bakåt knapp - kör callback onbackclick
+                    onClick = onBackClick,
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .size(56.dp),
@@ -73,8 +76,7 @@ fun EssensoljorScreen(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Bakåt",
-                        tint = Color.Black,
-                        modifier = Modifier.size(28.dp)
+                        tint = Color.Black
                     )
                 }
             }
@@ -84,25 +86,20 @@ fun EssensoljorScreen(
                 style = MaterialTheme.typography.headlineLarge.copy(fontSize = 38.sp),
                 fontWeight = FontWeight.Normal,
                 color = Color.Black,
-                modifier = Modifier.padding(vertical = 24.dp)
+                modifier = Modifier.padding(vertical = 16.dp)
             )
 
-            OutlinedTextField( // sökfältet - när man skriver, uppdateras searchquery
+            OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier
                     .width(300.dp)
                     .padding(bottom = 24.dp),
                 placeholder = {
-                    Text("Sök olja...", color = Color.Gray, fontSize = 26.sp) // hjälptext när det är tomt
+                    Text("Sök olja...", color = Color.Gray, fontSize = 26.sp)
                 },
-                leadingIcon = { // sökikon till vänster
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier.size(28.dp)
-                    )
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = null)
                 },
                 singleLine = true,
                 shape = commonShape,
@@ -117,8 +114,8 @@ fun EssensoljorScreen(
                 )
             )
 
-            if (searchQuery.isNotEmpty()) { // om användaren har skrivit något visas sökresultat
-                val allOilsMapped = // kopplar oljor till kategorier
+            if (searchQuery.isNotEmpty()) {
+                val allOilsMapped =
                     topnotOils.map { it to "T" } +
                             mellannotOils.map { it to "M" } +
                             basnotOils.map { it to "B" } +
@@ -140,7 +137,7 @@ fun EssensoljorScreen(
                             .width(300.dp)
                             .padding(bottom = 24.dp)
                             .border(1.dp, Color.Black, commonShape),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFEDF6FF)),
+                        colors = CardDefaults.cardColors(containerColor = lightSilver),
                         shape = commonShape
                     ) {
                         Column(
@@ -176,7 +173,7 @@ fun EssensoljorScreen(
 
                                     Spacer(modifier = Modifier.weight(1f))
 
-                                    IntensityDrops(intensity)
+                                    IntensityDrops(intensity, fontSize = 14)
                                 }
                             }
                         }
@@ -184,18 +181,20 @@ fun EssensoljorScreen(
                 }
             }
 
-            Button( // + olja knappen
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
                 onClick = {
                     selectedCategoriesForAdd.clear()
                     newOilName = ""
                     showAddDialog = true
-                }, // knappen öppnar addoildialog
+                },
                 modifier = Modifier
                     .width(110.dp)
                     .height(50.dp),
                 shape = RoundedCornerShape(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF81C784),
+                    containerColor = actionGreen,
                     contentColor = Color.Black
                 ),
                 border = BorderStroke(1.dp, Color.Black)
@@ -203,61 +202,37 @@ fun EssensoljorScreen(
                 Text("+ Olja", fontSize = 24.sp)
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
-            CategoryDropdown(
-                title = "Topnoter",
-                oils = topnotOils,
-                commonShape = commonShape,
-                isDeleteMode = isDeleteMode,
-                onRequestDelete = { oil ->
-                    oilToDelete = oil
-                    oilListToDeleteFrom = topnotOils
-                }
-            )
+            CategoryDropdown("Topnoter", topnotOils, commonShape, isDeleteMode) {
+                oilToDelete = it
+                oilListToDeleteFrom = topnotOils
+            }
 
-            CategoryDropdown(
-                title = "Mellannoter",
-                oils = mellannotOils,
-                commonShape = commonShape,
-                isDeleteMode = isDeleteMode,
-                onRequestDelete = { oil ->
-                    oilToDelete = oil
-                    oilListToDeleteFrom = mellannotOils
-                }
-            )
+            CategoryDropdown("Mellannoter", mellannotOils, commonShape, isDeleteMode) {
+                oilToDelete = it
+                oilListToDeleteFrom = mellannotOils
+            }
 
-            CategoryDropdown(
-                title = "Basnoter",
-                oils = basnotOils,
-                commonShape = commonShape,
-                isDeleteMode = isDeleteMode,
-                onRequestDelete = { oil ->
-                    oilToDelete = oil
-                    oilListToDeleteFrom = basnotOils
-                }
-            )
+            CategoryDropdown("Basnoter", basnotOils, commonShape, isDeleteMode) {
+                oilToDelete = it
+                oilListToDeleteFrom = basnotOils
+            }
 
-            CategoryDropdown(
-                title = "Övrigt",
-                oils = ovrigtOils,
-                commonShape = commonShape,
-                isDeleteMode = isDeleteMode,
-                onRequestDelete = { oil ->
-                    oilToDelete = oil
-                    oilListToDeleteFrom = ovrigtOils
-                }
-            )
+            CategoryDropdown("Övrigt", ovrigtOils, commonShape, isDeleteMode) {
+                oilToDelete = it
+                oilListToDeleteFrom = ovrigtOils
+            }
 
             Spacer(modifier = Modifier.height(90.dp))
         }
 
-        FloatingActionButton( // papperskorgsknappen
+        FloatingActionButton(
             onClick = { isDeleteMode = !isDeleteMode },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(24.dp),
-            containerColor = if (isDeleteMode) Color.Red else MaterialTheme.colorScheme.secondaryContainer,
+            containerColor = if (isDeleteMode) Color.Red else softSilver,
             contentColor = Color.Black,
             shape = CircleShape
         ) {
@@ -265,7 +240,7 @@ fun EssensoljorScreen(
         }
     }
 
-    if (showAddDialog) { // dialogen visas bara när showadddialog är true
+    if (showAddDialog) {
         AddOilDialog(
             onDismiss = { showAddDialog = false },
             topnotOils = topnotOils,
@@ -273,7 +248,7 @@ fun EssensoljorScreen(
             basnotOils = basnotOils,
             ovrigtOils = ovrigtOils,
             commonShape = commonShape,
-            buttonBlue = buttonBlue,
+            buttonBlue = actionGreen,
             inputTextStyle = inputTextStyle,
             labelTextStyle = labelTextStyle
         )
@@ -307,13 +282,13 @@ fun EssensoljorScreen(
                         },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
+                            containerColor = softSilver,
                             contentColor = Color.Black
                         ),
                         border = BorderStroke(1.dp, Color.Black),
                         shape = commonShape
                     ) {
-                        Text("Avbryt") // valet nollställs och stänger dialog
+                        Text("Avbryt")
                     }
 
                     Button(
@@ -321,7 +296,7 @@ fun EssensoljorScreen(
                             oilListToDeleteFrom?.remove(oilToDelete)
                             oilToDelete = null
                             oilListToDeleteFrom = null
-                        }, // tar bort oljan
+                        },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Red,

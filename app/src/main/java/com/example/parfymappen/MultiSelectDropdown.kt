@@ -24,17 +24,17 @@ fun MultiSelectDropdown(
     shape: RoundedCornerShape,
     textStyle: TextStyle
 ) {
+    val softSilver = Color(0xFFEAEAEA)
+    val lightSilver = Color(0xFFF6F6F6)
+
     var expanded by remember { mutableStateOf(false) }
 
-    // räknar hur många som är valda
     val numSelected = options.count { selectedStates["$title-$it"] == true }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
-
-        // TEXTFÄLTET (det man klickar på)
         OutlinedTextField(
             value = if (numSelected > 0) "$title ($numSelected)" else "Välj $title",
             onValueChange = {},
@@ -45,12 +45,12 @@ fun MultiSelectDropdown(
             modifier = Modifier
                 .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                 .width(300.dp)
-                .padding(vertical = 4.dp),
+                .padding(vertical = 20.dp),
             shape = shape,
             textStyle = textStyle,
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedContainerColor = Color(0xFFFFE8A3).copy(alpha = 0.75f),
-                focusedContainerColor = Color(0xFFFFE8A3).copy(alpha = 0.75f),
+                unfocusedContainerColor = softSilver,
+                focusedContainerColor = softSilver,
                 focusedTextColor = Color.Black,
                 unfocusedTextColor = Color.Black,
                 focusedBorderColor = Color.Black,
@@ -58,15 +58,12 @@ fun MultiSelectDropdown(
             )
         )
 
-        // DROPDOWN MENYN
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            containerColor = Color(0xFFFFF8DC),
+            containerColor = lightSilver,
             modifier = Modifier.border(1.dp, Color.Black, shape)
         ) {
-
-            // 🔴 NYTT: OM LISTAN ÄR TOM
             if (options.isEmpty()) {
                 DropdownMenuItem(
                     text = {
@@ -78,12 +75,14 @@ fun MultiSelectDropdown(
                     },
                     onClick = {}
                 )
-            }
-
-            // 🔵 ANNARS VISA OLJOR
-            else {
+            } else {
                 options.forEach { oil ->
                     val key = "$title-$oil"
+                    val intensity = if (oil.contains(" | ")) {
+                        oil.split(" | ")[1]
+                    } else {
+                        "Mellan"
+                    }
 
                     Row(
                         modifier = Modifier
@@ -92,10 +91,9 @@ fun MultiSelectDropdown(
                                 selectedStates[key] =
                                     !(selectedStates[key] ?: false)
                             }
-                            .padding(16.dp)
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-
-                        // KRYSSRUTA
                         Box(
                             modifier = Modifier
                                 .size(36.dp)
@@ -110,13 +108,14 @@ fun MultiSelectDropdown(
 
                         Spacer(modifier = Modifier.width(16.dp))
 
-                        // OLJANS NAMN
                         Text(
-                            oil.split(" | ")[0],
+                            text = oil.split(" | ")[0],
                             modifier = Modifier.weight(1f),
                             color = Color.Black,
                             fontSize = 24.sp
                         )
+
+                        IntensityDrops(intensity, fontSize = 14)
                     }
                 }
             }

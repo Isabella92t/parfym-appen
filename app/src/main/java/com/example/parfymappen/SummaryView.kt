@@ -36,6 +36,9 @@ fun SummaryView( // paramentrar, onback, onedit, onsave - gå tillbaka, gå till
     textStyle: TextStyle,
     buttonColor: Color
 ) {
+    val lightSilver = Color(0xFFF6F6F6)
+    val softSilver = Color(0xFFEAEAEA)
+
     var total = 0
     var t = 0
     var m = 0
@@ -99,7 +102,7 @@ fun SummaryView( // paramentrar, onback, onedit, onsave - gå tillbaka, gå till
                 .border(1.dp, Color.Black, shape),
             shape = shape,
             colors = CardDefaults.cardColors(
-                containerColor = Color(0xFFE3F2FD)
+                containerColor = lightSilver
             )
         ) {
             Row( // saker bredvid varandra
@@ -114,7 +117,7 @@ fun SummaryView( // paramentrar, onback, onedit, onsave - gå tillbaka, gå till
                             Text(
                                 text = label,
                                 fontSize = 18.sp,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.Normal,
                                 color = Color.Black
                             )
                             Text(
@@ -158,14 +161,12 @@ fun SummaryView( // paramentrar, onback, onedit, onsave - gå tillbaka, gå till
                             )
 
                             Spacer(Modifier.width(8.dp))
-
-
                         }
 
                         Text(
                             text = cat,
                             fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Normal,
                             color = Color.Black
                         )
                     }
@@ -258,7 +259,7 @@ fun SummaryView( // paramentrar, onback, onedit, onsave - gå tillbaka, gå till
             modifier = Modifier.fillMaxWidth(),
             shape = shape,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFE0E0E0),
+                containerColor = softSilver,
                 contentColor = Color.Black
             ),
             border = BorderStroke(1.dp, Color.Black)

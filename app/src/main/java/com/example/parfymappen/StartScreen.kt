@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 fun StartScreen(onEnterClick: () -> Unit) {
     val commonShape = RoundedCornerShape(100.dp)
 
+    val silver = Color(0xFFEAEAEA) // 🔥 NY färg
 
     Box(
         modifier = Modifier
@@ -48,7 +49,7 @@ fun StartScreen(onEnterClick: () -> Unit) {
                 modifier = Modifier
                     .width(300.dp)
                     .height(90.dp)
-                    .background(Color(0xFFFFE8A3).copy(alpha = 0.6f), commonShape)
+                    .background(silver.copy(alpha = 0.8f), commonShape) // 🔥 ändrad
                     .border(BorderStroke(1.dp, Color.Black), commonShape),
                 contentAlignment = Alignment.Center
             ) {
@@ -59,9 +60,8 @@ fun StartScreen(onEnterClick: () -> Unit) {
                     color = Color.Black
                 )
             }
+
             Spacer(modifier = Modifier.weight(0.14f))
-
-
         }
     }
 }
