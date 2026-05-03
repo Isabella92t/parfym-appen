@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// sparad parfym som en liten flaska
 @Composable
 fun PerfumeBottle(
     perfume: SavedPerfume,
@@ -27,8 +28,6 @@ fun PerfumeBottle(
     rotation: Float, // behålls för kompatibilitet
     onDelete: () -> Unit,
     onOpen: () -> Unit
-
-    //sparad parfym som en liten flaska
 ) {
     var selectedForDelete by remember { mutableStateOf(false) } // håller koll på om flaskan markerats för borttagning
 
@@ -90,9 +89,9 @@ fun PerfumeBottle(
                 if (isDeleteMode) { // visas om papperskorgläget är aktivt
                     Box(
                         modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(6.dp)
-                            .size(24.dp)
+                            .align(Alignment.BottomCenter) // 🔥 MITTEN NEDTILL
+                            .padding(bottom = 12.dp) // lite luft från botten
+                            .size(26.dp)
                             .background(Color.White, RoundedCornerShape(4.dp))
                             .border(
                                 BorderStroke(1.dp, Color.Black),
