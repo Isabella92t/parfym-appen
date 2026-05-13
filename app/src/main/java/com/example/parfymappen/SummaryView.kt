@@ -264,7 +264,7 @@ fun SummaryView( // paramentrar, onback, onedit, onsave - gå tillbaka, gå till
             ),
             border = BorderStroke(1.dp, Color.Black)
         ) {
-            Text("Redigera oljor", fontSize = 20.sp)
+            Text("Redigera parfym", fontSize = 20.sp)
         }
     }
 }

@@ -46,10 +46,12 @@ fun ParfymerScreen(
 
     var currentMode by remember { mutableStateOf("list") } // styr vilken vy som visas
     var perfumeName by remember { mutableStateOf("") } // sparar namnet på parfym
+    var originalPerfumeName by remember { mutableStateOf("") } // NAMNFIX: sparar gamla namnet när man redigerar parfym
     var perfumeNotes by remember { mutableStateOf("") } // sparar anteckningar
     var isDeleteMode by remember { mutableStateOf(false) } // styr om papperskorgsläget är aktivt
     var perfumeToDelete by remember { mutableStateOf<SavedPerfume?>(null) } // håller koll på vilken parfym som ska bort
     var isEditingExisting by remember { mutableStateOf(false) } // om man redigerar i en paryfm som redan finns
+    var showNameError by remember { mutableStateOf(false) } // NAMNFIX: visar popup om namnet redan finns
 
     // Vi använder unika nycklar för att skilja på samma olja i olika kategorier
     val selectedOils = remember { mutableStateMapOf<String, Boolean>() } // sparar vilka oljor som är valda
@@ -67,7 +69,18 @@ fun ParfymerScreen(
             onBack = { currentMode = "list" }, // tillbaka till parfymhyllan
             name = perfumeName,
             onNameChange = { perfumeName = it }, // uppdaterar parfymnamnet
-            onNext = { currentMode = "summary" }, // går vidare till sammanfattningen
+            onNext = {
+                val nameAlreadyExists = savedPerfumes.any {
+                    it.name.equals(perfumeName, ignoreCase = true) &&
+                            it.name != originalPerfumeName
+                } // NAMNFIX: kollar direkt när man trycker på Gå vidare
+
+                if (nameAlreadyExists) {
+                    showNameError = true
+                } else {
+                    currentMode = "summary"
+                }
+            }, // går vidare till sammanfattningen
             topnotOils = topnotOils,
             mellannotOils = mellannotOils,
             basnotOils = basnotOils,
@@ -85,6 +98,16 @@ fun ParfymerScreen(
             notes = perfumeNotes,
             onNotesChange = { perfumeNotes = it },
             onSave = {
+                val nameAlreadyExists = savedPerfumes.any {
+                    it.name.equals(perfumeName, ignoreCase = true) &&
+                            it.name != originalPerfumeName
+                } // NAMNFIX: extra säkerhet ifall namnet ändras innan sparning
+
+                if (nameAlreadyExists) {
+                    showNameError = true
+                    return@SummaryView
+                } // NAMNFIX: stoppar sparning och visar popup om namnet redan finns
+
                 val ingredients = mutableListOf<Ingredient>() // skapar en tom lista för ingredienser i parfymen
                 listOf(
                     topnotOils to "Topnoter",
@@ -100,10 +123,12 @@ fun ParfymerScreen(
                         }
                     }
                 }
-                if (isEditingExisting) savedPerfumes.removeAll { it.name == perfumeName } // redigerar man parfym så tas förra versionen bort och sparas som ny version
+
+                if (isEditingExisting) savedPerfumes.removeAll { it.name == originalPerfumeName } // NAMNFIX: tar bort gamla versionen med originalnamnet, inte det nya namnet
                 savedPerfumes.add(SavedPerfume(perfumeName, ingredients, perfumeNotes))
                 currentMode = "list"
                 isEditingExisting = false
+                originalPerfumeName = ""
             },
             selectedOils = selectedOils,
             oilDrops = oilDrops,
@@ -120,7 +145,7 @@ fun ParfymerScreen(
             ShelfView(
                 onBack = onBackClick,
                 onNew = { // + Parfym
-                    currentMode = "create"; perfumeName = ""; perfumeNotes = ""
+                    currentMode = "create"; perfumeName = ""; originalPerfumeName = ""; perfumeNotes = ""
                     selectedOils.clear(); oilDrops.clear(); isDeleteMode = false; isEditingExisting = false
                 },
                 savedPerfumes = savedPerfumes,
@@ -129,7 +154,7 @@ fun ParfymerScreen(
                 rotation = rotation,
                 onDeletePerfume = { perfumeToDelete = it },
                 onOpenPerfume = { p ->
-                    perfumeName = p.name; perfumeNotes = p.notes; isEditingExisting = true
+                    perfumeName = p.name; originalPerfumeName = p.name; perfumeNotes = p.notes; isEditingExisting = true
                     selectedOils.clear(); oilDrops.clear()
                     p.ingredients.forEach { // återskapar valda oljor och droppar från parfymens ingredienser
                         val key = "${it.category}-${it.name}"
@@ -194,6 +219,42 @@ fun ParfymerScreen(
                 )
             }
         }
+    }
+
+    if (showNameError) { // NAMNFIX: popup som visas när användaren försöker använda ett namn som redan finns
+        AlertDialog(
+            onDismissRequest = { showNameError = false },
+            confirmButton = {
+                Button(
+                    onClick = { showNameError = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = lightBlue,
+                        contentColor = Color.Black
+                    ),
+                    border = BorderStroke(1.dp, Color.Black),
+                    shape = commonShape
+                ) {
+                    Text("OK")
+                }
+            },
+            title = {
+                Text(
+                    "Finns redan!",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color.Black
+                )
+            },
+            text = {
+                Text(
+                    "Du har redan en parfym med detta namn.",
+                    color = Color.Black
+                )
+            },
+            containerColor = Color.White,
+            shape = commonShape,
+            modifier = Modifier.border(1.dp, Color.Black, commonShape)
+        )
     }
 }
 

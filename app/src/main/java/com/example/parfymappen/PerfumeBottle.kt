@@ -20,7 +20,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// sparad parfym som en liten flaska
 @Composable
 fun PerfumeBottle(
     perfume: SavedPerfume,
@@ -28,6 +27,8 @@ fun PerfumeBottle(
     rotation: Float, // behålls för kompatibilitet
     onDelete: () -> Unit,
     onOpen: () -> Unit
+
+    //sparad parfym som en liten flaska
 ) {
     var selectedForDelete by remember { mutableStateOf(false) } // håller koll på om flaskan markerats för borttagning
 
@@ -89,9 +90,9 @@ fun PerfumeBottle(
                 if (isDeleteMode) { // visas om papperskorgläget är aktivt
                     Box(
                         modifier = Modifier
-                            .align(Alignment.BottomCenter) // 🔥 MITTEN NEDTILL
-                            .padding(bottom = 12.dp) // lite luft från botten
-                            .size(26.dp)
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 8.dp)
+                            .size(24.dp)
                             .background(Color.White, RoundedCornerShape(4.dp))
                             .border(
                                 BorderStroke(1.dp, Color.Black),
@@ -127,14 +128,22 @@ fun PerfumeBottle(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     perfume.ingredients.take(3).forEach { ing -> // visa bara 3 först ingredienser
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("💧", fontSize = 10.sp)
-                            Spacer(Modifier.width(2.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "💧",
+                                fontSize = 10.sp,
+                                modifier = Modifier.width(14.dp)
+                            )
+
                             Text(
                                 text = ing.name.split(" | ")[0], // ingrediensens namn
                                 fontSize = 15.sp,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }

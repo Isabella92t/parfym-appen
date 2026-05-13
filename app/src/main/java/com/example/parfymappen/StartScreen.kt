@@ -38,7 +38,7 @@ fun StartScreen(onEnterClick: () -> Unit) {
             alpha = 0.7f
         )
 
-        // Startknapp i en box
+
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -47,7 +47,7 @@ fun StartScreen(onEnterClick: () -> Unit) {
 
             Box(
                 modifier = Modifier
-                    .width(300.dp)
+                      .width(300.dp)
                     .height(90.dp)
                     .background(silver.copy(alpha = 0.8f), commonShape) // 🔥 ändrad
                     .border(BorderStroke(1.dp, Color.Black), commonShape),

@@ -127,8 +127,10 @@ fun EssensoljorScreen(
                 )
 
                 val matches = groupedOils.keys.filter {
-                    val nameOnly = it.split(" | ")[0]
-                    nameOnly.contains(searchQuery, ignoreCase = true)
+                    val nameOnly = it.split(" | ")[0] // alternativen finns kvar så länge de du skriver finns med
+
+                    nameOnly.startsWith(searchQuery, ignoreCase = true) ||
+                            searchQuery.startsWith(nameOnly, ignoreCase = true)
                 }
 
                 if (matches.isNotEmpty()) {
@@ -146,7 +148,7 @@ fun EssensoljorScreen(
                                 .heightIn(max = 200.dp)
                                 .verticalScroll(rememberScrollState())
                         ) {
-                            matches.forEach { oilText ->
+                            matches.take(3).forEach { oilText ->
                                 val cats = groupedOils[oilText] ?: emptyList()
                                 val letters = cats.distinct().joinToString(" ")
 
